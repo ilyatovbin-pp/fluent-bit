@@ -2122,6 +2122,15 @@ static void cb_s3_flush(struct flb_event_chunk *event_chunk,
     }
     chunk_size = flb_sds_len(chunk);
 
+    if (ctx->replace_dots == FLB_TRUE) {
+        char *p   = chunk;
+        char *end = chunk + chunk_size;
+        while (p != end) {
+            if (*p == '.') *p = '_';
+            p++;
+        }
+    }
+
     /* Get a file candidate matching the given 'tag' */
     upload_file = s3_store_file_get(ctx,
                                     event_chunk->tag,
@@ -2489,7 +2498,11 @@ static struct flb_config_map config_map[] = {
      "AWS Profile name. AWS Profiles can be configured with AWS CLI and are usually stored in "
      "$HOME/.aws/ directory."
     },
-
+    {
+     FLB_CONFIG_MAP_BOOL, "replace_dots", "false",
+     0, FLB_TRUE, offsetof(struct flb_s3, replace_dots),
+     "When enabled, replace field name dots with underscore, required by Elasticsearch"
+    },
     /* EOF */
     {0}
 };

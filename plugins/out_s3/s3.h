@@ -200,4 +200,6 @@ int create_headers(struct flb_s3 *ctx, char *body_md5,
                    struct flb_aws_header **headers, int *num_headers,
                    int multipart_upload);
 
+int replace_dots;
+
 #endif
